@@ -57,7 +57,5 @@ Designed for serious trainees who want structured programs, progress intelligenc
 - TailwindCSS
 - LocalStorage Persistence
 
----
 
-## 📁 Project Structure
 

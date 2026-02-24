@@ -1,13 +1,13 @@
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   createUserWithEmailAndPassword,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
-  onAuthStateChanged,
   signOut,
-  updateProfile,
   updatePassword,
+  updateProfile,
 } from "firebase/auth";
-import { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
 
 import { auth, googleProvider } from "../firebase";
 
@@ -39,9 +39,10 @@ export function AuthProvider({ children }) {
         await updateProfile(result.user, { displayName: name.trim() });
       }
 
-      // onAuthStateChanged will update user, but we can also set immediately:
-      setUser({ ...result.user });
-      return result.user;
+      // بعد updateProfile الأفضل نقرأ currentUser لضمان displayName محدث
+      setUser(auth.currentUser ? { ...auth.currentUser } : { ...result.user });
+
+      return auth.currentUser || result.user;
     } catch (e) {
       setAuthError(e);
       throw e;

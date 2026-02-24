@@ -8,6 +8,11 @@ import promise from "eslint-plugin-promise";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import unusedImports from "eslint-plugin-unused-imports";
 import { defineConfig, globalIgnores } from "eslint/config";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default defineConfig([
   globalIgnores([
@@ -18,7 +23,7 @@ export default defineConfig([
     "playwright-report",
   ]),
 
-  // ✅ Node / config files (vite/eslint/vitest/playwright) — allow __dirname, process, etc.
+  // ✅ Node/config files (vite/eslint/vitest/playwright) — allow __dirname, process, etc.
   {
     files: [
       "*.config.{js,mjs,cjs}",
@@ -29,19 +34,25 @@ export default defineConfig([
       "playwright.local.config.{js,mjs,cjs}",
     ],
     languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
       globals: {
         ...globals.node,
       },
     },
     rules: {
+      // ما نضيّعش وقتنا في ترتيب imports لملفات config
       "import/order": "off",
+      // ومش محتاجين resolver هنا
       "import/no-unresolved": "off",
+      // لو eslint لقط console في configs
+      "no-console": "off",
     },
   },
 
   // ✅ App code
   {
-    files: ["**/*.{js,jsx}"],
+    files: ["src/**/*.{js,jsx}"],
     extends: [
       js.configs.recommended,
       react.configs.flat.recommended,
@@ -64,14 +75,15 @@ export default defineConfig([
     settings: {
       react: { version: "detect" },
 
-      // ✅ Aliases المستخدمة عندك: @app @features @shared + @
+      // ✅ مهم: resolver للـ aliases بتوع Vite
       "import/resolver": {
         alias: {
           map: [
-            ["@", "./src"],
-            ["@app", "./src/app"],
-            ["@features", "./src/features"],
-            ["@shared", "./src/shared"],
+            ["@", path.resolve(__dirname, "src")],
+            ["@app", path.resolve(__dirname, "src/app")],
+            ["@features", path.resolve(__dirname, "src/features")],
+            ["@shared", path.resolve(__dirname, "src/shared")],
+            ["@services", path.resolve(__dirname, "src/services")],
           ],
           extensions: [".js", ".jsx", ".json", ".png", ".jpg", ".jpeg", ".svg"],
         },
@@ -92,8 +104,12 @@ export default defineConfig([
       "react/prop-types": "off",
 
       // Imports
-      // ✅ تجاهل assets (png/svg) عشان ما يعملش false positives
-      "import/no-unresolved": ["error", { ignore: ["\\.png$", "\\.jpg$", "\\.jpeg$", "\\.svg$"] }],
+      "import/no-unresolved": [
+        "error",
+        {
+          ignore: ["\\.png$", "\\.jpg$", "\\.jpeg$", "\\.svg$"],
+        },
+      ],
       "import/order": [
         "warn",
         {
@@ -103,11 +119,19 @@ export default defineConfig([
       ],
 
       // Promises
-      // ✅ ده اللي ضرب عندك في exerciseService — نخليه off بدل ما يزعّق
+      // لو حابب تشغّلها بعدين OK، لكن دلوقتي خليها off زي ما عملت
       "promise/param-names": "off",
 
-      // React Refresh rule ساعات بيزعّق في Context files
+      // React Refresh rule ساعات بيزعّق في Context files (هنعالجها ببلوك مخصوص تحت)
       "react-refresh/only-export-components": "warn",
+    },
+  },
+
+  // ✅ Context files (غالبًا بتكسر react-refresh/only-export-components)
+  {
+    files: ["src/**/context/**/*.{js,jsx}"],
+    rules: {
+      "react-refresh/only-export-components": "off",
     },
   },
 
@@ -123,14 +147,6 @@ export default defineConfig([
     rules: {
       "import/no-unresolved": "off",
       "no-unused-expressions": "off",
-    },
-  },
-
-  // ✅ Context files (غالبًا بتكسر react-refresh/only-export-components)
-  {
-    files: ["src/**/context/**/*.{js,jsx}"],
-    rules: {
-      "react-refresh/only-export-components": "off",
     },
   },
 ]);

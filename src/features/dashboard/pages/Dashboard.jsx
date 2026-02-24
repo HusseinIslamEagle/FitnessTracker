@@ -6,14 +6,17 @@ import Heatmap from "../components/dashboard/Heatmap";
 import MotivationStrip from "../components/dashboard/MotivationStrip";
 import StatsGrid from "../components/dashboard/StatsGrid";
 
+import { loadWorkouts } from "@/shared/domain/workoutsRepository";
+import { useAuth } from "@features/auth";
 
 export default function Dashboard() {
-  const workouts =
-    JSON.parse(localStorage.getItem("workouts")) || [];
+  const { user } = useAuth();
+  const isAuthed = Boolean(user);
+
+  const workouts = loadWorkouts(isAuthed);
 
   return (
     <div className="min-h-screen px-10 py-10 space-y-16">
-
       <DashboardHero workouts={workouts} />
 
       <StatsGrid workouts={workouts} />
@@ -27,7 +30,6 @@ export default function Dashboard() {
       <MotivationStrip workouts={workouts} />
 
       <ActivityTimeline workouts={workouts} />
-
     </div>
   );
 }

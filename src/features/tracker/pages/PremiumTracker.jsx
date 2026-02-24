@@ -3,30 +3,20 @@ import { Pencil, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
+import {
+  loadWorkouts,
+  saveWorkouts,
+  migrateIfNeeded,
+} from "@/shared/domain/workoutsRepository";
 import { useAuth } from "@features/auth";
 
-const UNLIMITED_KEY = "fitness_tracker_unlimited_v1";
-const GUEST_KEY = "fitness_tracker_guest_v1";
 const GUEST_LIMIT = 5;
-
-function safeParse(json, fallback) {
-  try {
-    return json ? JSON.parse(json) : fallback;
-  } catch {
-    return fallback;
-  }
-}
 
 export default function PremiumTracker() {
   const { user } = useAuth();
   const isAuthed = Boolean(user);
 
-  const storageKey = isAuthed ? UNLIMITED_KEY : GUEST_KEY;
-
-  const [workouts, setWorkouts] = useState(() => {
-    const saved = localStorage.getItem(storageKey);
-    return safeParse(saved, []);
-  });
+  const [workouts, setWorkouts] = useState(() => loadWorkouts(isAuthed));
 
   const [workout, setWorkout] = useState({
     exercise: "",
@@ -40,19 +30,16 @@ export default function PremiumTracker() {
 
   // migration only (no setState)
   useEffect(() => {
-    if (!isAuthed) return;
-
-    const guestData = safeParse(localStorage.getItem(GUEST_KEY), []);
-    const userData = safeParse(localStorage.getItem(UNLIMITED_KEY), []);
-
-    if (guestData.length > 0 && userData.length === 0) {
-      localStorage.setItem(UNLIMITED_KEY, JSON.stringify(guestData));
-    }
+    migrateIfNeeded(isAuthed);
   }, [isAuthed]);
+
+  // persist whenever workouts changes
+  useEffect(() => {
+    saveWorkouts(isAuthed, workouts);
+  }, [workouts, isAuthed]);
 
   const persist = (data) => {
     setWorkouts(data);
-    localStorage.setItem(storageKey, JSON.stringify(data));
   };
 
   const today = new Date().toLocaleDateString("en-GB", {
@@ -82,9 +69,7 @@ export default function PremiumTracker() {
     };
 
     if (editingId) {
-      const updated = workouts.map((w) =>
-        w.id === editingId ? newWorkout : w
-      );
+      const updated = workouts.map((w) => (w.id === editingId ? newWorkout : w));
       persist(updated);
       setEditingId(null);
     } else {
@@ -280,7 +265,9 @@ export default function PremiumTracker() {
         </p>
         <p className="text-4xl md:text-5xl font-black text-orange-500 italic uppercase">
           {totalVolume}{" "}
-          <span className="text-sm not-italic font-normal text-gray-600">kg</span>
+          <span className="text-sm not-italic font-normal text-gray-600">
+            kg
+          </span>
         </p>
       </div>
     </div>

@@ -1,17 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 import logo from "@shared/assets/logo.png";
 import ProfileDropdown from "@shared/components/ProfileDropdown";
 
-export default function Navbar({
-  user,
-  logout,
-  onToggleSidebar,
-  onOpenModal,
-}) {
+export default function Navbar({ user, logout, onToggleSidebar, onOpenModal }) {
   const location = useLocation();
   const [guestDrawerOpen, setGuestDrawerOpen] = useState(false);
 
@@ -24,7 +19,11 @@ export default function Navbar({
 
   // ✅ close guest drawer on route change
   useEffect(() => {
-    setGuestDrawerOpen(false);
+    const t = setTimeout(() => {
+      setGuestDrawerOpen(false);
+    }, 0);
+
+    return () => clearTimeout(t);
   }, [location.pathname]);
 
   // ✅ close on ESC

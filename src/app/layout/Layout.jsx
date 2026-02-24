@@ -4,9 +4,7 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Footer from "@app/layout/Footer";
 import Navbar from "@app/layout/Navbar";
 import AppRoutes from "@app/routes/AppRoutes";
-
 import { AuthModal, useAuth } from "@features/auth";
-
 import CustomCursor from "@shared/components/CustomCursor";
 import Sidebar from "@shared/components/Sidebar";
 

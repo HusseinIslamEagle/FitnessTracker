@@ -15,9 +15,10 @@ export default function AuthModal({ type = "signin", close }) {
   const [submitting, setSubmitting] = useState(false);
   const [localError, setLocalError] = useState("");
 
-  const errorText = useMemo(() => {
-    return localError || authError?.message || "";
-  }, [localError, authError]);
+  const errorText = useMemo(() => localError || authError?.message || "", [
+    localError,
+    authError,
+  ]);
 
   // ✅ Close on ESC
   useEffect(() => {
@@ -27,6 +28,15 @@ export default function AuthModal({ type = "signin", close }) {
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [close]);
+
+  // ✅ Lock body scroll while modal is open (mobile polish)
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
 
   const redirectToUserHome = () => {
     close();
@@ -87,18 +97,23 @@ export default function AuthModal({ type = "signin", close }) {
         <div className="absolute inset-0 flex items-end md:items-center justify-center px-0 md:px-4">
           <motion.div
             onMouseDown={onPanelMouseDown}
-            initial={{ y: 24, opacity: 0, scale: 1 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: 18, opacity: 0, scale: 1 }}
+            initial={{ y: 24, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 18, opacity: 0 }}
             transition={{ type: "spring", stiffness: 420, damping: 36 }}
             className="
-              w-full md:max-w-md
+              w-full
+              md:w-full md:max-w-md
+              lg:max-w-[520px]
               bg-[#111] border border-gray-800
               rounded-t-3xl md:rounded-3xl
               shadow-[0_0_60px_rgba(255,107,0,0.12)]
               max-h-[88vh] md:max-h-[85vh]
               overflow-hidden
             "
+            style={{
+              paddingBottom: "env(safe-area-inset-bottom)",
+            }}
           >
             {/* Header (sticky) */}
             <div className="sticky top-0 z-10 bg-[#111]/95 backdrop-blur border-b border-gray-800 px-5 md:px-7 pt-5 pb-4">
@@ -108,13 +123,15 @@ export default function AuthModal({ type = "signin", close }) {
                     {isSignup ? "Create Account" : "Welcome Back"}
                   </h2>
                   <p className="text-sm text-gray-400 mt-1">
-                    {isSignup ? "Start your journey now." : "Sign in to continue."}
+                    {isSignup
+                      ? "Start your journey now."
+                      : "Sign in to continue."}
                   </p>
                 </div>
 
                 <button
                   onClick={close}
-                  className="shrink-0 text-gray-400 hover:text-orange-500"
+                  className="shrink-0 text-gray-400 hover:text-orange-500 transition p-2 -mr-2 rounded-xl hover:bg-white/5"
                   aria-label="Close"
                   type="button"
                 >
@@ -124,7 +141,7 @@ export default function AuthModal({ type = "signin", close }) {
 
               {/* Error */}
               {errorText && (
-                <div className="mt-3 text-sm text-red-400">
+                <div className="mt-3 text-sm text-red-400 break-words">
                   {errorText}
                 </div>
               )}
@@ -174,7 +191,11 @@ export default function AuthModal({ type = "signin", close }) {
                   type="submit"
                   className="w-full py-3.5 md:py-4 bg-orange-500 text-black font-black uppercase rounded-xl hover:bg-orange-400 transition disabled:opacity-60"
                 >
-                  {submitting ? "Please wait..." : isSignup ? "Sign Up" : "Sign In"}
+                  {submitting
+                    ? "Please wait..."
+                    : isSignup
+                    ? "Sign Up"
+                    : "Sign In"}
                 </button>
 
                 <button
@@ -194,7 +215,13 @@ export default function AuthModal({ type = "signin", close }) {
                     <button
                       type="button"
                       className="text-orange-500 hover:text-orange-400"
-                      onClick={() => navigate("/tracker?auth=signin")}
+                      onClick={() => {
+                        // ✅ keep same page, just open signin via query param
+                        close();
+                        navigate(`${window.location.pathname}?auth=signin`, {
+                          replace: true,
+                        });
+                      }}
                     >
                       Sign in
                     </button>
@@ -205,7 +232,12 @@ export default function AuthModal({ type = "signin", close }) {
                     <button
                       type="button"
                       className="text-orange-500 hover:text-orange-400"
-                      onClick={() => navigate("/tracker?auth=signup")}
+                      onClick={() => {
+                        close();
+                        navigate(`${window.location.pathname}?auth=signup`, {
+                          replace: true,
+                        });
+                      }}
                     >
                       Sign up
                     </button>
@@ -213,7 +245,6 @@ export default function AuthModal({ type = "signin", close }) {
                 )}
               </div>
 
-              {/* Small hint for mobile usability */}
               <p className="mt-3 text-xs text-gray-600">
                 Tip: Tap outside to close, or press ESC.
               </p>

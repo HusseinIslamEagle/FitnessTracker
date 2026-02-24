@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const reviews = [
   {
@@ -7,22 +7,22 @@ const reviews = [
     image: "https://randomuser.me/api/portraits/men/32.jpg",
     text: "The most structured program I've ever followed. Strength and physique improved drastically.",
     rating: 5,
-    video: "https://www.youtube.com/embed/B0YA5pbvtj8?si=a3pgtyahFG1Wpk44"
+    video: "https://www.youtube.com/embed/B0YA5pbvtj8?si=a3pgtyahFG1Wpk44",
   },
   {
     name: "Hussein",
     image: "https://randomuser.me/api/portraits/men/75.jpg",
     text: "Clear progression system and real support. Finally stopped wasting time with random workouts.",
     rating: 5,
-    video: "https://www.youtube.com/embed/B0YA5pbvtj8?si=a3pgtyahFG1Wpk44"
+    video: "https://www.youtube.com/embed/B0YA5pbvtj8?si=a3pgtyahFG1Wpk44",
   },
   {
     name: "Omar",
     image: "https://randomuser.me/api/portraits/men/45.jpg",
     text: "Within 12 weeks I gained visible muscle and increased my strength massively.",
     rating: 5,
-    video: "https://www.youtube.com/embed/B0YA5pbvtj8?si=a3pgtyahFG1Wpk44"
-  }
+    video: "https://www.youtube.com/embed/B0YA5pbvtj8?si=a3pgtyahFG1Wpk44",
+  },
 ];
 
 export default function ReviewsSection() {
@@ -30,16 +30,11 @@ export default function ReviewsSection() {
   const [isHovered, setIsHovered] = useState(false);
   const [activeVideo, setActiveVideo] = useState(null);
 
-  /* =========================
-     Auto Play Carousel
-  ========================== */
   useEffect(() => {
     if (isHovered) return;
 
     const interval = setInterval(() => {
-      setIndex((prev) =>
-        prev === reviews.length - 1 ? 0 : prev + 1
-      );
+      setIndex((prev) => (prev === reviews.length - 1 ? 0 : prev + 1));
     }, 4000);
 
     return () => clearInterval(interval);
@@ -47,18 +42,15 @@ export default function ReviewsSection() {
 
   return (
     <section className="relative py-28 bg-[#0f0f0f] overflow-hidden text-center">
-
       {/* Background Noise Texture */}
       <div
         className="absolute inset-0 opacity-5 pointer-events-none"
         style={{
-          backgroundImage:
-            "url('https://grainy-gradients.vercel.app/noise.svg')"
+          backgroundImage: "url('https://grainy-gradients.vercel.app/noise.svg')",
         }}
       />
 
       <div className="relative max-w-4xl mx-auto px-6">
-
         <h2 className="text-5xl font-bold mb-20">
           What Clients <span className="text-orange-500">Say</span>
         </h2>
@@ -103,18 +95,13 @@ export default function ReviewsSection() {
                   alt={reviews[index].name}
                   className="w-16 h-16 rounded-full border-2 border-orange-500 mb-3"
                 />
-                <h4 className="text-white font-semibold">
-                  {reviews[index].name}
-                </h4>
-                <p className="text-xs text-gray-500">
-                  Verified Client
-                </p>
+                <h4 className="text-white font-semibold">{reviews[index].name}</h4>
+                <p className="text-xs text-gray-500">Verified Client</p>
 
                 {/* Video Button */}
                 <button
-                  onClick={() =>
-                    setActiveVideo(reviews[index].video)
-                  }
+                  type="button"
+                  onClick={() => setActiveVideo(reviews[index].video)}
                   className="mt-4 text-orange-500 text-sm hover:underline"
                 >
                   ▶ Watch Video Testimonial
@@ -127,31 +114,38 @@ export default function ReviewsSection() {
           <div className="flex justify-center gap-3 mt-8">
             {reviews.map((_, i) => (
               <button
+                type="button"
                 key={i}
                 onClick={() => setIndex(i)}
                 className={`h-2 rounded-full transition-all ${
-                  i === index
-                    ? "w-8 bg-orange-500"
-                    : "w-2 bg-gray-600"
+                  i === index ? "w-8 bg-orange-500" : "w-2 bg-gray-600"
                 }`}
+                aria-label={`Go to review ${i + 1}`}
               />
             ))}
           </div>
         </div>
-
       </div>
 
-      {/* Video Modal */}
+      {/* Video Modal (بدون click خارجًا للإغلاق لتفادي a11y errors) */}
       {activeVideo && (
-        <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-6"
-          onClick={() => setActiveVideo(null)}
-        >
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-6">
           <div
+            role="dialog"
+            aria-modal="true"
             className="relative w-full max-w-3xl aspect-video"
-            onClick={(e) => e.stopPropagation()}
           >
+            <button
+              type="button"
+              onClick={() => setActiveVideo(null)}
+              className="absolute -top-12 right-0 px-4 py-2 rounded-xl bg-white/10 border border-white/10 text-white text-sm hover:bg-white/15"
+              aria-label="Close video"
+            >
+              ✕ Close
+            </button>
+
             <iframe
+              title="Client video testimonial"
               src={activeVideo}
               className="w-full h-full rounded-2xl"
               allowFullScreen

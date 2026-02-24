@@ -1,4 +1,3 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -8,6 +7,7 @@ import {
   updatePassword,
   updateProfile,
 } from "firebase/auth";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { auth, googleProvider } from "../firebase";
 

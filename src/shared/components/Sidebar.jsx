@@ -5,7 +5,8 @@ import {
   Dumbbell,
   LineChart,
   Activity,
-  Flame
+  Flame,
+  X
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -13,86 +14,96 @@ export default function Sidebar({ open, setOpen }) {
   const location = useLocation();
 
   const nav = [
-    { icon: <LayoutDashboard size={22} strokeWidth={2.5} />, path: "/dashboard" },
-    { icon: <Dumbbell size={22} strokeWidth={2.5} />, path: "/workouts" },
-    { icon: <LineChart size={22} strokeWidth={2.5} />, path: "/progress" },
-    { icon: <Activity size={22} strokeWidth={2.5} />, path: "/tracker" },
-    { icon: <Flame size={22} strokeWidth={2.5} />, path: "/calories" }
+    { label: "Home", icon: <HomeIcon size={20} />, path: "/" },
+    { label: "Dashboard", icon: <LayoutDashboard size={20} />, path: "/dashboard" },
+    { label: "Workouts", icon: <Dumbbell size={20} />, path: "/workouts" },
+    { label: "Progress", icon: <LineChart size={20} />, path: "/progress" },
+    { label: "Tracker", icon: <Activity size={20} />, path: "/tracker" },
+    { label: "Calories", icon: <Flame size={20} />, path: "/calories" }
   ];
 
   return (
     <AnimatePresence>
       {open && (
         <>
-          {/* Overlay */}
+          {/* ===== Overlay ===== */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setOpen(false)}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[80]"
           />
 
-          {/* Sidebar */}
-          <motion.div
-            initial={{ x: -120 }}
+          {/* ===== Sidebar ===== */}
+          <motion.aside
+            initial={{ x: -280 }}
             animate={{ x: 0 }}
-            exit={{ x: -120 }}
-            transition={{ type: "spring", stiffness: 260, damping: 30 }}
-            className="fixed top-0 left-0 h-full w-[110px] 
-                       bg-white/5 backdrop-blur-2xl 
-                       border-r border-white/10 
-                       z-50 flex flex-col items-center py-10"
+            exit={{ x: -280 }}
+            transition={{ type: "spring", stiffness: 260, damping: 28 }}
+            className="fixed top-0 left-0 h-full w-[260px]
+                       bg-[#0f0f0f]/95 backdrop-blur-2xl
+                       border-r border-white/10
+                       z-[90] flex flex-col"
           >
+            {/* ===== Header ===== */}
+            <div className="flex items-center justify-between px-6 py-6 border-b border-white/10">
+              <span className="text-orange-500 font-bold tracking-wider">
+                Navigation
+              </span>
 
-            {/* ===== HOME BUTTON (نازل لتحت شوية) ===== */}
-            <Link
-              to="/"
-              onClick={() => setOpen(false)}
-              className="mt-25 mb-10"
-            >
-              <motion.div
-                whileHover={{ scale: 1.15 }}
-                whileTap={{ scale: 0.95 }}
-                className={`p-4 rounded-2xl transition ${
-                  location.pathname === "/"
-                    ? "bg-orange-500/30 text-orange-500 shadow-[0_0_15px_rgba(255,107,0,0.6)]"
-                    : "text-white hover:text-orange-500"
-                }`}
+              <button
+                onClick={() => setOpen(false)}
+                className="text-gray-400 hover:text-orange-500 transition"
               >
-                <HomeIcon size={24} strokeWidth={2.5} />
-              </motion.div>
-            </Link>
+                <X size={20} />
+              </button>
+            </div>
 
-            {/* Divider */}
-            <div className="w-10 h-px bg-white/10 mb-8" />
-
-            {/* باقي العناصر */}
-            <div className="flex flex-col items-center space-y-8">
+            {/* ===== Nav Items ===== */}
+            <div className="flex flex-col py-6 space-y-2 px-4">
               {nav.map((item, i) => {
                 const active = location.pathname === item.path;
+
                 return (
                   <Link
                     key={i}
                     to={item.path}
                     onClick={() => setOpen(false)}
+                    className="relative"
                   >
                     <motion.div
-                      whileHover={{ scale: 1.15 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`p-4 rounded-2xl transition ${
-                        active
-                          ? "bg-orange-500/20 text-orange-500"
-                          : "text-gray-400 hover:text-orange-500"
-                      }`}
+                      whileHover={{ x: 4 }}
+                      className={`flex items-center gap-4 px-4 py-3 rounded-xl transition
+                        ${
+                          active
+                            ? "bg-orange-500/15 text-orange-500"
+                            : "text-gray-400 hover:text-orange-500 hover:bg-white/5"
+                        }`}
                     >
                       {item.icon}
+                      <span className="font-medium tracking-wide">
+                        {item.label}
+                      </span>
+
+                      {/* Active Indicator */}
+                      {active && (
+                        <motion.div
+                          layoutId="sidebar-active"
+                          className="absolute left-0 top-0 bottom-0 w-1 bg-orange-500 rounded-r-full"
+                        />
+                      )}
                     </motion.div>
                   </Link>
                 );
               })}
             </div>
-          </motion.div>
+
+            {/* ===== Footer Area (Optional Future Upgrade) ===== */}
+            <div className="mt-auto px-6 py-6 border-t border-white/10 text-xs text-gray-500">
+              Fitness Platform v1.0
+            </div>
+          </motion.aside>
         </>
       )}
     </AnimatePresence>

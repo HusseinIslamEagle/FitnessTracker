@@ -79,11 +79,12 @@ export default defineConfig([
       "import/resolver": {
         alias: {
           map: [
-            ["@", path.resolve(__dirname, "src")],
-            ["@app", path.resolve(__dirname, "src/app")],
-            ["@features", path.resolve(__dirname, "src/features")],
-            ["@shared", path.resolve(__dirname, "src/shared")],
-            ["@services", path.resolve(__dirname, "src/services")],
+             ["@", "./src"],
+             ["@app", "./src/app"],
+             ["@features", "./src/features"],
+             ["@shared", "./src/shared"], 
+             ["@data", "./src/data"],
+             ["@domain", "./src/domain"],
           ],
           extensions: [".js", ".jsx", ".json", ".png", ".jpg", ".jpeg", ".svg"],
         },

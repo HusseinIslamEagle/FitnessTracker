@@ -1,19 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { useAuth } from "../../auth/context/AuthContext";
-
 
 export default function Settings() {
   const { user, updateUserName, changePassword } = useAuth();
 
-  const [name, setName] = useState("");
+  const [name, setName] = useState(() => user?.displayName || "");
   const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    if (user?.displayName) {
-      setName(user.displayName);
-    }
-  }, [user]);
 
   const saveName = async () => {
     if (!name.trim()) return;
@@ -33,16 +26,16 @@ export default function Settings() {
   return (
     <div className="min-h-[80vh] flex justify-center items-center">
       <div className="bg-[#111] border border-gray-700 rounded-3xl p-10 w-[500px] space-y-8 shadow-2xl">
-
-        <h2 className="text-2xl font-bold text-center">
-          Account Settings
-        </h2>
+        <h2 className="text-2xl font-bold text-center">Account Settings</h2>
 
         {/* NAME SECTION */}
         <div className="space-y-3">
-          <label className="text-gray-400">Display Name</label>
+          <label htmlFor="displayName" className="text-gray-400">
+            Display Name
+          </label>
 
           <input
+            id="displayName"
             className="w-full p-3 bg-black border border-gray-700 rounded-xl focus:border-orange-500 transition"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -58,9 +51,12 @@ export default function Settings() {
 
         {/* PASSWORD SECTION */}
         <div className="space-y-3">
-          <label className="text-gray-400">Change Password</label>
+          <label htmlFor="newPassword" className="text-gray-400">
+            Change Password
+          </label>
 
           <input
+            id="newPassword"
             type="password"
             placeholder="New Password"
             className="w-full p-3 bg-black border border-gray-700 rounded-xl focus:border-orange-500 transition"
@@ -75,7 +71,6 @@ export default function Settings() {
             Update Password
           </button>
         </div>
-
       </div>
     </div>
   );

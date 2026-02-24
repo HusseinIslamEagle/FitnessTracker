@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   LineChart,
   Line,
@@ -6,29 +6,29 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from "recharts";
 
 export default function Progress() {
-  const [entries, setEntries] = useState([]);
-  const [goalWeight, setGoalWeight] = useState("");
-  const [height, setHeight] = useState("");
+  const [entries, setEntries] = useState(() => {
+    const saved = localStorage.getItem("progressData");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [goalWeight, setGoalWeight] = useState(() => {
+    return localStorage.getItem("goalWeight") || "";
+  });
+
+  const [height, setHeight] = useState(() => {
+    return localStorage.getItem("userHeight") || "";
+  });
+
   const [editingIndex, setEditingIndex] = useState(null);
 
   const [form, setForm] = useState({
     weight: "",
-    bodyFat: ""
+    bodyFat: "",
   });
-
-  useEffect(() => {
-    const saved = localStorage.getItem("progressData");
-    const savedGoal = localStorage.getItem("goalWeight");
-    const savedHeight = localStorage.getItem("userHeight");
-
-    if (saved) setEntries(JSON.parse(saved));
-    if (savedGoal) setGoalWeight(savedGoal);
-    if (savedHeight) setHeight(savedHeight);
-  }, []);
 
   const saveEntry = () => {
     if (!form.weight || !form.bodyFat) return;
@@ -41,7 +41,7 @@ export default function Progress() {
       bodyFat: parseFloat(form.bodyFat),
       lean: parseFloat(lean.toFixed(2)),
       fat: parseFloat(fat.toFixed(2)),
-      date: new Date().toLocaleDateString()
+      date: new Date().toLocaleDateString(),
     };
 
     let updated;
@@ -78,7 +78,7 @@ export default function Progress() {
       weightDiff,
       fatDiff,
       muscleDiff,
-      currentLean: last.lean
+      currentLean: last.lean,
     };
   };
 
@@ -86,7 +86,6 @@ export default function Progress() {
 
   return (
     <div className="min-h-[90vh] p-10 max-w-6xl mx-auto space-y-12 text-white">
-      
       <h1 className="text-3xl font-bold text-center uppercase tracking-tighter">
         Progress Intelligence System
       </h1>
@@ -145,26 +144,47 @@ export default function Progress() {
       {/* ================= ANALYSIS (ONLY WHITE, ORANGE, RED) ================= */}
       {analysis && (
         <div className="bg-[#0c0c0c] p-8 rounded-3xl border border-[#1a1a1a] space-y-6 shadow-lg">
-          <h3 className="text-xl font-bold text-[#ff6b00] uppercase tracking-wider italic">Smart Analysis</h3>
-          
+          <h3 className="text-xl font-bold text-[#ff6b00] uppercase tracking-wider italic">
+            Smart Analysis
+          </h3>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-3">
-              <p className="text-white font-medium">Muscle Gain/Loss: 
-                <span className={`ml-2 font-bold ${analysis.muscleDiff >= 0 ? 'text-white' : 'text-red-600'}`}>
-                  {analysis.muscleDiff > 0 ? `+${analysis.muscleDiff.toFixed(2)}` : analysis.muscleDiff.toFixed(2)} kg
+              <p className="text-white font-medium">
+                Muscle Gain/Loss:
+                <span
+                  className={`ml-2 font-bold ${
+                    analysis.muscleDiff >= 0 ? "text-white" : "text-red-600"
+                  }`}
+                >
+                  {analysis.muscleDiff > 0
+                    ? `+${analysis.muscleDiff.toFixed(2)}`
+                    : analysis.muscleDiff.toFixed(2)}{" "}
+                  kg
                 </span>
               </p>
-              <p className="text-white font-medium">Current Muscle Mass: 
-                <span className="ml-2 font-bold text-[#ff6b00]">{analysis.currentLean.toFixed(2)} kg</span>
+              <p className="text-white font-medium">
+                Current Muscle Mass:
+                <span className="ml-2 font-bold text-[#ff6b00]">
+                  {analysis.currentLean.toFixed(2)} kg
+                </span>
               </p>
             </div>
-            
+
             <div className="space-y-3 border-l border-[#1a1a1a] pl-8">
-              <p className="text-white font-medium">Weight Change: 
-                <span className="ml-2 font-bold text-white">{analysis.weightDiff.toFixed(1)} kg</span>
+              <p className="text-white font-medium">
+                Weight Change:
+                <span className="ml-2 font-bold text-white">
+                  {analysis.weightDiff.toFixed(1)} kg
+                </span>
               </p>
-              <p className="text-white font-medium">Fat Change: 
-                <span className={`ml-2 font-bold ${analysis.fatDiff <= 0 ? 'text-white' : 'text-red-600'}`}>
+              <p className="text-white font-medium">
+                Fat Change:
+                <span
+                  className={`ml-2 font-bold ${
+                    analysis.fatDiff <= 0 ? "text-white" : "text-red-600"
+                  }`}
+                >
                   {analysis.fatDiff.toFixed(2)} kg
                 </span>
               </p>
@@ -178,12 +198,32 @@ export default function Progress() {
         <div className="bg-[#0c0c0c] p-8 rounded-3xl border border-[#1a1a1a]">
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={entries}>
-              <Line type="monotone" dataKey="weight" stroke="#ff6b00" strokeWidth={3} dot={{fill: '#ff6b00'}} name="Weight" />
-              <Line type="monotone" dataKey="lean" stroke="#ffffff" strokeWidth={2} strokeDasharray="5 5" name="Muscle" />
+              <Line
+                type="monotone"
+                dataKey="weight"
+                stroke="#ff6b00"
+                strokeWidth={3}
+                dot={{ fill: "#ff6b00" }}
+                name="Weight"
+              />
+              <Line
+                type="monotone"
+                dataKey="lean"
+                stroke="#ffffff"
+                strokeWidth={2}
+                strokeDasharray="5 5"
+                name="Muscle"
+              />
               <CartesianGrid stroke="#1a1a1a" vertical={false} />
               <XAxis dataKey="date" stroke="#ffffff" fontSize={10} />
               <YAxis stroke="#ffffff" fontSize={10} />
-              <Tooltip contentStyle={{backgroundColor: '#000', border: '1px solid #1a1a1a', color: '#fff'}} />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#000",
+                  border: "1px solid #1a1a1a",
+                  color: "#fff",
+                }}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -191,20 +231,42 @@ export default function Progress() {
 
       {/* ================= LIST ================= */}
       <div className="space-y-4">
-        {entries.slice().reverse().map((e, i) => (
-          <div key={i} className="bg-[#0c0c0c] p-6 rounded-2xl border border-[#1a1a1a] flex justify-between items-center transition hover:border-gray-700">
-            <div>
-              <p className="font-bold text-white text-lg">{e.date} — {e.weight}kg</p>
-              <p className="text-sm font-medium mt-1">
-                Muscle: <span className="text-[#ff6b00]">{e.lean}kg</span> | Fat: <span className="text-red-600">{e.bodyFat}%</span>
-              </p>
+        {entries
+          .slice()
+          .reverse()
+          .map((e, i) => (
+            <div
+              key={i}
+              className="bg-[#0c0c0c] p-6 rounded-2xl border border-[#1a1a1a] flex justify-between items-center transition hover:border-gray-700"
+            >
+              <div>
+                <p className="font-bold text-white text-lg">
+                  {e.date} — {e.weight}kg
+                </p>
+                <p className="text-sm font-medium mt-1">
+                  Muscle: <span className="text-[#ff6b00]">{e.lean}kg</span> | Fat:{" "}
+                  <span className="text-red-600">{e.bodyFat}%</span>
+                </p>
+              </div>
+              <div className="flex gap-6">
+                <button
+                  onClick={() => {
+                    setForm({ weight: e.weight, bodyFat: e.bodyFat });
+                    setEditingIndex(entries.length - 1 - i);
+                  }}
+                  className="text-white font-bold text-xs uppercase hover:text-[#ff6b00] transition"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => deleteEntry(entries.length - 1 - i)}
+                  className="text-red-600 font-bold text-xs uppercase hover:text-red-500 transition"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-            <div className="flex gap-6">
-              <button onClick={() => { setForm({ weight: e.weight, bodyFat: e.bodyFat }); setEditingIndex(entries.length - 1 - i); }} className="text-white font-bold text-xs uppercase hover:text-[#ff6b00] transition">Edit</button>
-              <button onClick={() => deleteEntry(entries.length - 1 - i)} className="text-red-600 font-bold text-xs uppercase hover:text-red-500 transition">Delete</button>
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );

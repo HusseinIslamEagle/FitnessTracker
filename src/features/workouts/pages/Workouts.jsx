@@ -138,7 +138,7 @@ export default function Workouts() {
               <h2 className="text-4xl font-black italic uppercase tracking-tighter">
                 {selectedProgram.title}{" "}
                 <span className="text-orange-500 text-xl font-normal not-italic ml-2 opacity-50">
-                  // Blueprint
+                  {/* Blueprint */}
                 </span>
               </h2>
             </div>
@@ -222,7 +222,8 @@ export default function Workouts() {
                   </h3>
                   <span
                     className={`text-[8px] px-2 py-0.5 rounded shadow-sm font-bold uppercase ${
-                      cardio.intensity === "High" || cardio.intensity === "Very High"
+                      cardio.intensity === "High" ||
+                      cardio.intensity === "Very High"
                         ? "bg-red-500/20 text-red-500"
                         : "bg-green-500/20 text-green-500"
                     }`}
@@ -347,7 +348,10 @@ export default function Workouts() {
           {filteredItems.map((ex) => (
             <motion.div
               key={ex.id}
-              whileHover={{ scale: 1.01, backgroundColor: "rgba(255,255,255,0.05)" }}
+              whileHover={{
+                scale: 1.01,
+                backgroundColor: "rgba(255,255,255,0.05)",
+              }}
               className="bg-black/40 border border-white/5 rounded-3xl p-6 flex flex-col justify-between transition-all"
             >
               <div>
@@ -411,7 +415,11 @@ export default function Workouts() {
                   : "bg-orange-500/10 border-orange-500/30 text-orange-500 hover:bg-orange-500/15"
               }`}
           >
-            {canLoadMore ? (loading ? "Loading..." : "Load More") : "No More Exercises"}
+            {canLoadMore
+              ? loading
+                ? "Loading..."
+                : "Load More"
+              : "No More Exercises"}
           </button>
         </div>
       </section>

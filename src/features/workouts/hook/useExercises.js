@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { fetchExercises } from "@/services/exerciseService";
+import { fetchExercises } from "@data/exercises/exercises.repository";
 
 export function useExercises({ limit = 20 } = {}) {
   const [items, setItems] = useState([]);
@@ -12,7 +12,10 @@ export function useExercises({ limit = 20 } = {}) {
 
   const lastControllerRef = useRef(null);
 
-  const canLoadMore = useMemo(() => items.length < count, [items.length, count]);
+  const canLoadMore = useMemo(
+    () => items.length < count,
+    [items.length, count]
+  );
 
   const abortLast = useCallback(() => {
     if (lastControllerRef.current) {

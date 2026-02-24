@@ -1,8 +1,9 @@
-import AnimatedPage from "@app/layout/AnimatedPage";
-import ProtectedRoute from "@app/routes/ProtectedRoute";
 import { AnimatePresence } from "framer-motion";
 import { lazy, Suspense } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
+
+import AnimatedPage from "@app/layout/AnimatedPage";
+import ProtectedRoute from "@app/routes/ProtectedRoute";
 
 const Home = lazy(() => import("@features/home/pages/Home"));
 const UserHome = lazy(() => import("@features/home/pages/UserHome"));
@@ -11,28 +12,21 @@ const Contact = lazy(() => import("@features/contact/pages/Contact"));
 const CalorieCalculator = lazy(() =>
   import("@features/calories/pages/CalorieCalculator")
 );
-
 const Feedback = lazy(() => import("@features/feedback/pages/Feedback"));
 
 const Dashboard = lazy(() => import("@features/dashboard/pages/Dashboard"));
 const Workouts = lazy(() => import("@features/workouts/pages/Workouts"));
 const Progress = lazy(() => import("@features/progress/pages/Progress"));
-const PremiumTracker = lazy(() => import("@features/tracker/pages/PremiumTracker"));
+const PremiumTracker = lazy(() =>
+  import("@features/tracker/pages/PremiumTracker")
+);
 const Settings = lazy(() => import("@features/settings/pages/Settings"));
-
-function PageLoader() {
-  return (
-    <div className="min-h-[60vh] flex items-center justify-center text-gray-400">
-      Loading...
-    </div>
-  );
-}
 
 export default function AppRoutes({ user }) {
   const location = useLocation();
 
   return (
-    <Suspense fallback={<PageLoader />}>
+    <Suspense fallback={null}>
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           {/* Public */}
@@ -42,6 +36,7 @@ export default function AppRoutes({ user }) {
               <AnimatedPage>{user ? <UserHome /> : <Home />}</AnimatedPage>
             }
           />
+
           <Route
             path="/contact"
             element={
@@ -50,6 +45,7 @@ export default function AppRoutes({ user }) {
               </AnimatedPage>
             }
           />
+
           <Route
             path="/calories"
             element={
@@ -58,11 +54,22 @@ export default function AppRoutes({ user }) {
               </AnimatedPage>
             }
           />
+
           <Route
             path="/feedback"
             element={
               <AnimatedPage>
                 <Feedback />
+              </AnimatedPage>
+            }
+          />
+
+          {/* ✅ Tracker Public + force remount on auth change */}
+          <Route
+            path="/tracker"
+            element={
+              <AnimatedPage>
+                <PremiumTracker key={user ? "auth" : "guest"} />
               </AnimatedPage>
             }
           />
@@ -78,6 +85,7 @@ export default function AppRoutes({ user }) {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/workouts"
             element={
@@ -88,6 +96,7 @@ export default function AppRoutes({ user }) {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/progress"
             element={
@@ -98,16 +107,7 @@ export default function AppRoutes({ user }) {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/tracker"
-            element={
-              <ProtectedRoute redirectTo="/">
-                <AnimatedPage>
-                  <PremiumTracker />
-                </AnimatedPage>
-              </ProtectedRoute>
-            }
-          />
+
           <Route
             path="/settings"
             element={

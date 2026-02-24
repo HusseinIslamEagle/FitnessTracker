@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-import { fetchExercises } from "../exerciseService";
+import { fetchExercises } from "@data/exercises/exercises.repository";
 
 describe("fetchExercises", () => {
   beforeEach(() => {

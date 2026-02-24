@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
+import { motion } from "framer-motion";
+import { useState } from "react";
+
 import NumberInput from "../components/NumberInput";
 
 export default function CalorieCalculator() {

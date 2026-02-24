@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Trash2, Pencil } from "lucide-react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 const STORAGE_KEY = "fitness_tracker_unlimited_v1";

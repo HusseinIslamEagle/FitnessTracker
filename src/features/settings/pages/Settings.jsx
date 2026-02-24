@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+
 import { useAuth } from "../../auth/context/AuthContext";
+
 
 export default function Settings() {
   const { user, updateUserName, changePassword } = useAuth();

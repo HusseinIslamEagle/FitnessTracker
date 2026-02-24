@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { useState } from "react";
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);

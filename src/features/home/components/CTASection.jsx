@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 
 export default function CTASection() {
   const sectionRef = useRef(null);

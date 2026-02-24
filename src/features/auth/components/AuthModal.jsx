@@ -1,5 +1,6 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
+import { useState } from "react";
+
 import { useAuth } from "../context/AuthContext";
 
 export default function AuthModal({ type, close }) {

@@ -1,14 +1,12 @@
-import { useState } from "react";
 
-import { useAuth } from "@features/auth/context/AuthContext";
+import Footer from "@app/layout/Footer";
+import Navbar from "@app/layout/Navbar";
+import AppRoutes from "@app/routes/AppRoutes";
 import AuthModal from "@features/auth/components/AuthModal";
-
+import { useAuth } from "@features/auth/context/AuthContext";
 import CustomCursor from "@shared/components/CustomCursor";
 import Sidebar from "@shared/components/Sidebar";
-
-import Navbar from "@app/layout/Navbar";
-import Footer from "@app/layout/Footer";
-import AppRoutes from "@app/routes/AppRoutes";
+import { useState } from "react";
 
 export default function Layout() {
   const { user } = useAuth();

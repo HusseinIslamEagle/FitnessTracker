@@ -1,9 +1,8 @@
-import { Routes, Route, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
-import { lazy, Suspense } from "react";
-
 import AnimatedPage from "@app/layout/AnimatedPage";
 import ProtectedRoute from "@app/routes/ProtectedRoute";
+import { AnimatePresence } from "framer-motion";
+import { lazy, Suspense } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 const Home = lazy(() => import("@features/home/pages/Home"));
 const UserHome = lazy(() => import("@features/home/pages/UserHome"));

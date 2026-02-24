@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
+import CTASection from "../components/CTASection";
 import PackagesSection from "../components/PackagesSection";
+import ReviewsSection from "../components/ReviewsSection";
 import StatsSection from "../components/StatsSection";
 import Transformations from "../components/Transformations";
-import ReviewsSection from "../components/ReviewsSection";
-import CTASection from "../components/CTASection";
 
 export default function Home({ magneticEffect, resetMagnet }) {
   const location = useLocation();

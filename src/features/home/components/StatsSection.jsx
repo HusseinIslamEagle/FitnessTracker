@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 const stats = [
   {

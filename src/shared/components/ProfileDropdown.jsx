@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../features/auth/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function ProfileDropdown() {

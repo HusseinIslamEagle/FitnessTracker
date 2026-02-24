@@ -2,7 +2,7 @@ import DashboardHero from "../components/dashboard/DashboardHero";
 import StatsGrid from "../components/dashboard/StatsGrid";
 import ActivityChart from "../components/dashboard/ActivityChart";
 import Heatmap from "../components/dashboard/Heatmap";
-import AIInsights from "../components/dashboard/AIInsights";
+
 
 
 export default function Dashboard() {

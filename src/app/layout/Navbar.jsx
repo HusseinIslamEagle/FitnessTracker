@@ -1,8 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Menu } from "lucide-react";
-import ProfileDropdown from "../components/ProfileDropdown";
-import logo from "../assets/logo.png";
+
+import ProfileDropdown from "@shared/components/ProfileDropdown";
+import logo from "@shared/assets/logo.png";
 
 export default function Navbar({ user, onToggleSidebar, onOpenModal }) {
   const location = useLocation();

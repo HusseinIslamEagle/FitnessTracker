@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../auth/context/AuthContext";
 import PackagesSection from "../components/PackagesSection";
 import { Lightbulb } from "lucide-react";
 import { useMemo } from "react";

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 
@@ -52,4 +52,18 @@ describe("Workouts Exercise Library", () => {
     expect(screen.getByText("Bench Press")).toBeInTheDocument();
     expect(screen.queryByText("Pull Up")).not.toBeInTheDocument();
   });
+  it("sorts exercises by name (Z-A)", async () => {
+    const user = userEvent.setup();
+    render(<Workouts />);
+
+    const sortSelect = screen.getByLabelText("Sort exercises");
+    await user.selectOptions(sortSelect, "name-desc");
+
+    const grid = screen.getByTestId("exercise-library-grid");
+    const cards = within(grid).getAllByTestId("exercise-card");
+
+    expect(within(cards[0]).getByText("Pull Up")).toBeInTheDocument();
+    expect(within(cards[1]).getByText("Bench Press")).toBeInTheDocument();
+  });
+
 });

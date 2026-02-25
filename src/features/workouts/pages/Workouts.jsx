@@ -17,6 +17,7 @@ export default function Workouts() {
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [equipmentFilter, setEquipmentFilter] = useState("All");
   const [muscleFilter, setMuscleFilter] = useState("All");
+  const [sortBy, setSortBy] = useState("relevance");
 
   const toggleProgram = useCallback((program) => {
     setSelectedProgram((prev) => (prev?.id === program.id ? null : program));
@@ -27,6 +28,7 @@ export default function Workouts() {
     setCategoryFilter("All");
     setEquipmentFilter("All");
     setMuscleFilter("All");
+    setSortBy("relevance");
   }, []);
 
   const filterOptions = useMemo(() => {
@@ -73,10 +75,22 @@ export default function Workouts() {
     });
   }, [items, query, categoryFilter, equipmentFilter, muscleFilter]);
 
+  const sortedFilteredItems = useMemo(() => {
+    const list = [...filteredItems];
+
+    if (sortBy === "name-asc") {
+      list.sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+    } else if (sortBy === "name-desc") {
+      list.sort((a, b) => String(b.name || "").localeCompare(String(a.name || "")));
+    }
+
+    return list;
+  }, [filteredItems, sortBy]);
+
   const shownCountText = useMemo(() => {
     const total = typeof count === "number" ? count : "—";
-    return `Live exercises from Wger API (${items.length}/${total}) • Showing ${filteredItems.length}`;
-  }, [items.length, count, filteredItems.length]);
+    return `Live exercises from Wger API (${items.length}/${total}) • Showing ${sortedFilteredItems.length}`;
+  }, [items.length, count, sortedFilteredItems.length]);
 
   return (
     <div className="min-h-screen px-6 py-20 text-white bg-[#0a0a0a]">
@@ -283,7 +297,7 @@ export default function Workouts() {
         </div>
 
         {/* Filters */}
-        <div className="mb-8 grid lg:grid-cols-4 gap-3">
+        <div className="mb-8 grid lg:grid-cols-5 gap-3">
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -313,6 +327,17 @@ export default function Workouts() {
                 {e}
               </option>
             ))}
+          </select>
+
+          <select
+            aria-label="Sort exercises"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-sm outline-none focus:border-orange-500/40"
+          >
+            <option value="relevance">Sort: Relevance</option>
+            <option value="name-asc">Sort: Name (A-Z)</option>
+            <option value="name-desc">Sort: Name (Z-A)</option>
           </select>
 
           <div className="flex gap-3">
@@ -363,9 +388,10 @@ export default function Workouts() {
         )}
 
         {/* List */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredItems.map((ex) => (
+        <div data-testid="exercise-library-grid" className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {sortedFilteredItems.map((ex) => (
             <motion.div
+              data-testid="exercise-card"
               key={ex.id}
               whileHover={{
                 scale: 1.01,
@@ -412,7 +438,7 @@ export default function Workouts() {
         </div>
 
         {/* Empty state */}
-        {!loading && !error && filteredItems.length === 0 && (
+        {!loading && !error && sortedFilteredItems.length === 0 && (
           <div className="mt-10 text-center text-gray-400 text-sm">
             No results. Try changing filters.
           </div>
